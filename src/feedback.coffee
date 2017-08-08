@@ -79,7 +79,7 @@ feedback =
         ]
 
   get_dictionary_match_feedback: (match, is_sole_match) ->
-    warning = if match.dictionary_name == 'passwords'
+    warning = if -1 != match.dictionary_name.indexOf 'passwords'
       if is_sole_match and not match.l33t and not match.reversed
         if match.rank <= 10
           'This is a top-10 common password'
