@@ -56,6 +56,8 @@ def parse_frequency_lists(data_dir):
             for i, line in enumerate(f):
                 rank = i + 1 # rank starts at 1
                 token = line.split()[0]
+                if token in token_to_rank: # do not overwrite if already exists
+                    continue
                 token_to_rank[token] = rank
         freq_lists[freq_list_name] = token_to_rank
     for freq_list_name in DICTIONARIES:
