@@ -4,8 +4,8 @@ feedback =
   default_feedback:
     warning: ''
     suggestions: [
-      "Use a few words, avoid common phrases"
-      "No need for symbols, digits, or uppercase letters"
+      "Použijte pár neobvyklých slov, vyhněte se běžným frázím"
+      "Nemusíte používat čísla, speciální znaky nebo velká písmena"
     ]
 
   get_feedback: (score, sequence) ->
@@ -22,7 +22,7 @@ feedback =
     for match in sequence[1..]
       longest_match = match if match.token.length > longest_match.token.length
     feedback = @get_match_feedback(longest_match, sequence.length == 1)
-    extra_feedback = 'Add another word or two. Uncommon words are better.'
+    extra_feedback = 'Přidejte jedno-dvě slova, neobvyklá jsou lepší'
     if feedback?
       feedback.suggestions.unshift extra_feedback
       feedback.warning = '' unless feedback.warning?
@@ -40,77 +40,77 @@ feedback =
       when 'spatial'
         layout = match.graph.toUpperCase()
         warning = if match.turns == 1
-          'Straight rows of keys are easy to guess'
+          'Písmena v řadě na klávesnici jsou snadno uhodnutelná'
         else
-          'Short keyboard patterns are easy to guess'
+          'Krátké vzory na klávesnici jsou snadno uhodnutelné'
         warning: warning
         suggestions: [
-          'Use a longer keyboard pattern with more turns'
+          'Zkuste delší vzor, s více „zatáčkami“'
         ]
 
       when 'repeat'
         warning = if match.base_token.length == 1
-          'Repeats like "aaa" are easy to guess'
+          'Opakování jako „aaa“ jsou snadno uhodnutelná'
         else
-          'Repeats like "abcabcabc" are only slightly harder to guess than "abc"'
+          'Opakování jako „abcabcabc“ jsou jen o trochu složitěji uhodnutelná než „abc“'
         warning: warning
         suggestions: [
-          'Avoid repeated words and characters'
+          'Vyhněte se opakování slov a písmen'
         ]
 
       when 'sequence'
-        warning: "Sequences like abc or 6543 are easy to guess"
+        warning: "Řady jako abc nebo 6543 jsou snadno uhodnutelné"
         suggestions: [
-          'Avoid sequences'
+          'Vyhněte se souvislým řadám'
         ]
 
       when 'regex'
         if match.regex_name == 'recent_year'
-          warning: "Recent years are easy to guess"
+          warning: "Nedávné letopočty jsou snadno uhodnutelné"
           suggestions: [
-            'Avoid recent years'
-            'Avoid years that are associated with you'
+            'Vyhněte se nedávným letopočtům'
+            'Vyhněte se letopočtům, které se vás týkají (narození vás nebo dětí apod.)'
           ]
 
       when 'date'
-        warning: "Dates are often easy to guess"
+        warning: "Datumy jsou často snadno uhodnutelné"
         suggestions: [
-          'Avoid dates and years that are associated with you'
+          'Vyhněte se datům, které se vás týkají (narození vás nebo dětí apod.)'
         ]
 
   get_dictionary_match_feedback: (match, is_sole_match) ->
     warning = if -1 != match.dictionary_name.indexOf 'passwords'
       if is_sole_match and not match.l33t and not match.reversed
         if match.rank <= 10
-          'This is a top-10 common password'
+          'Tohle je jedno z 10 nejpoužívanějších hesel'
         else if match.rank <= 100
-          'This is a top-100 common password'
+          'Tohle je jedno ze 100 nejpoužívanějších hesel'
         else
-          'This is a very common password'
+          'Tohle je velmi běžné heslo'
       else if match.guesses_log10 <= 4
-        'This is similar to a commonly used password'
+        'Vaše heslo je velmi podobné častému heslu'
     else if match.dictionary_name in ['english_wikipedia', 'czech_wikipedia']
       if is_sole_match
-        'A word by itself is easy to guess'
+        'Samostatné slovo je snadno uhodnutelné'
     else if match.dictionary_name in ['surnames', 'male_names', 'female_names', 'cs_surnames_no_dia', 'cs_names_no_dia']
       if is_sole_match
-        'Names and surnames by themselves are easy to guess'
+        'Samotná jména a příjmení jsou snadno uhodnutelná'
       else
-        'Common names and surnames are easy to guess'
+        'Běžná jména a příjmení jsou snadno uhodnutelná'
     else
       ''
 
     suggestions = []
     word = match.token
     if word.match(scoring.START_UPPER)
-      suggestions.push "Capitalization doesn't help very much"
+      suggestions.push "Velké písmeno na začátku moc nepomáhá"
     else if word.match(scoring.ALL_UPPER) and word.toLowerCase() != word
-      suggestions.push "All-uppercase is almost as easy to guess as all-lowercase"
+      suggestions.push "Heslo psané kapitálkami je uhádnutelné skoro stejně snadno jako normální"
 
     if match.reversed and match.token.length >= 4
-      suggestions.push "Reversed words aren't much harder to guess"
+      suggestions.push "Slova psaná pozpátku nejsou o moc bezpečnější než normální"
     if match.l33t
-      suggestions.push "Predictable substitutions like '@' instead of 'a' don't help very much"
+      suggestions.push "Předvídatelné záměny znaků jako '@' místo 'a' moc nepomáhají"
 
     result =
       warning: warning
