@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# coding: utf-8
+
 import sys
 import simplejson
 
@@ -15,6 +17,13 @@ qwerty = r'''
     qQ wW eE rR tT yY uU iI oO pP [{ ]} \|
      aA sS dD fF gG hH jJ kK lL ;: '"
       zZ xX cC vV bB nN mM ,< .> /?
+'''
+
+qwertz = ur'''
+;° +1 ě2 š3 č4 ř5 ž6 ý7 á8 í9 é0 =% ´ˇ
+    qQ wW eE rR tT zZ uU iI oO pP ú/ )( ¨'
+     aA sS dD fF gG hH jJ kK lL ů" §!
+      yY xX cC vV bB nN mM ,? .: -_
 '''
 
 dvorak = r'''
@@ -98,6 +107,7 @@ if __name__ == '__main__':
         f.write('adjacency_graphs = \n  ')
         lines = []
         for graph_name, args in [('qwerty', (qwerty, True)),
+                                 ('qwertz', (qwertz, True)),
                                  ('dvorak', (dvorak, True)),
                                  ('keypad', (keypad, False)),
                                  ('mac_keypad', (mac_keypad, False))]:
